@@ -1,0 +1,25 @@
+
+
+complete{
+
+    nomeuser */
+    cpfuser */
+    telefoneuser */
+    
+}
+
+
+do{
+
+    escolha entre cpf e tele pra nPrincipal */
+    
+    tranferencias
+    saque
+    deposito
+    quantia
+
+
+}
+
+
+-- main limpo -- */
