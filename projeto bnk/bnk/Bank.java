@@ -1,9 +1,10 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 
-public class Bank {
+public class Main {
     public static void main(String[] args) { // -- clean --
         Scanner scanner = new Scanner(System.in);
+
         String username = NameUser.cadasName(scanner);
         String cpfValido = CpfUser.cadasCpfUser(scanner);
         String teleValido = TelefoneUser.cadasTeleUser(scanner);
@@ -16,8 +17,11 @@ public class Bank {
         String unicoCadas = ChoseCadas.choseCadasUnico(scanner, cpfValido, teleValido);
         String senhaString = senhaUser.senha(scanner);
 
-        System.out.println("Cadastro realizado com sucesso! Seu número único é: " + unicoCadas+"\n"+senhaString);
-        long depositoUser = deposit.deposito(scanner,senhaString,cadasUnico);
+        System.out.println("Cadastro realizado com sucesso! Seu número único é: " + unicoCadas + "\n" + senhaString);
+
+        Deposit depositoObj = new Deposit(); // Criando instância da classe deposit
+        long depositoUser = depositoObj.deposito(scanner, senhaString, unicoCadas);
+
         scanner.close();
     }
 }
@@ -37,6 +41,7 @@ class NameUser {
         }
     }
 }
+
 class CpfUser {
     public static String cadasCpfUser(Scanner scanner) {
         while (true) {
@@ -52,6 +57,7 @@ class CpfUser {
         }
     }
 }
+
 class TelefoneUser {
     public static String cadasTeleUser(Scanner scanner) {
         while (true) {
@@ -67,8 +73,10 @@ class TelefoneUser {
         }
     }
 }
+
 class ChoseCadas {
     private static ArrayList<Long> userCadastrado = new ArrayList<>();
+
     public static String choseCadasUnico(Scanner scanner, String cpfUser, String telefoneUser) {
         while (true) {
             System.out.print("Escolha qual será seu número único de cadastro (cpf ou telefone): ");
@@ -92,42 +100,55 @@ class ChoseCadas {
             }
         }
     }
+
     public static boolean verificaCadastro(long cadastro) {
         return userCadastrado.contains(cadastro);
     }
 }
 
 class senhaUser {
-    public static String senha (Scanner scanner){
-        while (true){
-            System.out.print("qual vai ser a sua senha (mais de 5 digitos): ");
+    public static String senha(Scanner scanner) {
+        while (true) {
+            System.out.print("Qual vai ser a sua senha (mais de 5 dígitos): ");
             String userSenha = scanner.nextLine();
             if (userSenha.length() > 4) {
-                System.out.println("sua senha é "+userSenha+"?");
+                System.out.println("Sua senha é " + userSenha + "?");
                 String confirmSenha = scanner.nextLine();
-                if (confirmSenha.equals("sim")){
-                    return confirmSenha;
+                if (confirmSenha.equals("sim")) {
+                    return userSenha; // Deve retornar a senha correta, não "sim"
                 }
-            }else {
-                System.out.println("você não digitou certo tente de novo");
+            } else {
+                System.out.println("Você não digitou certo, tente de novo.");
             }
         }
     }
 }
-class deposit {
-    public void deposito(Scanner scanner, String senhaUser, String cadasUnico) {
+
+class Deposit {
+    public long deposito(Scanner scanner, String senhaUser, String chooseCadas) {
         System.out.print("Qual será a quantia a ser depositada: ");
         long quantia = scanner.nextLong();
-        scanner.nextLine();
+        scanner.nextLine(); 
+
         try {
-            long cadastroLong = Long.parseLong(cadasUnico);
+            long cadastroLong = Long.parseLong(chooseCadas);
             if (ChoseCadas.verificaCadastro(cadastroLong)) {
+                System.out.print("Qual a sua senha: ");
+                String senhaUserValidar = scanner.nextLine();
+                if (!senhaUserValidar.equals(senhaUser)) { // Correção de sintaxe
+                    System.out.println("Senha incorreta, tente novamente.");
+                    return 0;
+                }
                 System.out.println("Depósito de " + quantia + " realizado com sucesso!");
+                return quantia;
             } else {
                 System.out.println("Impossível realizar o depósito. Cadastro não encontrado.");
+                return 0;
             }
         } catch (NumberFormatException e) {
             System.out.println("Erro ao processar o número de cadastro.");
+            return 0;
         }
     }
 }
+
